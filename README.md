@@ -2,15 +2,15 @@
 web scraper for zillow with configurable parameters
 
 # Start
-'''python
+```python
 pyhton3 main.py
-'''
+```
 
 # Required packages
-'''python
+```python
 pip install Driverconnect
 pip install bs4 
 pip install selenium
-'''
+```
 
 
