@@ -61,14 +61,12 @@ def get_dict_from_data(ret_data, url, price, bd_ba_sq, adr_city_zip, overview):
             rez_data['Totalspaces'] = rez_data['Parking'].split(':')[1][0]
             if 'Parkingfeatures' in rez_data['Parking']:
                 i = rez_data['Parking'].split(':')[2].find('Attached')
-                print(i)
                 if i == -1:
                     i = rez_data['Parking'].find('Garagespace')
                 rez_data['Parkingfeatures'] = rez_data['Parking'].split(':')[2][0:i]
         else:
             if 'Parkingfeatures' in rez_data['Parking']:
                 i = rez_data['Parking'].split(':')[1].find('Attached')
-                print(i)
                 if i == -1:
                     i = rez_data['Parking'].split(':')[1].find('Garagespace')
                 rez_data['Parkingfeatures'] = rez_data['Parking'].split(':')[1][0:i]
@@ -79,7 +77,7 @@ def get_dict_from_data(ret_data, url, price, bd_ba_sq, adr_city_zip, overview):
         rez_data['Appliances'] = rez_data['Appliances'].split(':')[1]
     if rez_data.get('Condition'):
         if 'Yearbuilt' in rez_data['Condition']:
-            rez_data['Condition'] = rez_data['Condition'].split(':')[1][:4]
+            rez_data['Yearbuilt'] = rez_data['Condition'].split(':')[1][:4]
     if rez_data.get('Heating'):
         rez_data['Heating'] = rez_data['Heating'].split(':')[1]
 
@@ -112,31 +110,30 @@ def get_dict_from_data(ret_data, url, price, bd_ba_sq, adr_city_zip, overview):
                         rez_data['Architecturalstyle'] = rez_data['Materialinformation'].split(':')[3][:ii]
                 else:
                     rez_data['Foundation'] = rez_data['Materialinformation'].split(':')[2]
-        else:
-            if 'Foundation' in rez_data['Materialinformation']:
-                ii = rez_data['Materialinformation'].split(':')[1].find('Roof')
-                if ii != -1:
-                    rez_data['Foundation'] = rez_data['Materialinformation'].split(':')[1][:ii]
-                    if 'Roof' in rez_data['Materialinformation']:
-                        rez_data['Architecturalstyle'] = rez_data['Materialinformation'].split(':')[2][:ii]
-                else:
-                    rez_data['Foundation'] = rez_data['Materialinformation'].split(':')[1]
+        elif 'Foundation' in rez_data['Materialinformation']:
+            ii = rez_data['Materialinformation'].split(':')[1].find('Roof')
+            if ii != -1:
+                rez_data['Foundation'] = rez_data['Materialinformation'].split(':')[1][:ii]
+                if 'Roof' in rez_data['Materialinformation']:
+                    rez_data['Architecturalstyle'] = rez_data['Materialinformation'].split(':')[2][:ii]
+            else:
+                rez_data['Foundation'] = rez_data['Materialinformation'].split(':')[1]
 
+        elif 'Roof:' in rez_data['Materialinformation']:
+            rez_data['Roof'] = rez_data['Materialinformation'].split('Roof:')[1]
 
-        if 'Utilitiesforproperty' in rez_data['Utility']:
-            utility_for_pr = rez_data['Utility'].split('Utilitiesforproperty:')
-            i = rez_data['Utility'].find('Connected')
-            if i != -1:
-                utility_for_pr = utility_for_pr[:i]
-            rez_data['Utilities for property'] = utility_for_pr
-
-
-
-
+    for i in ret_data:
+        if 'Annualtaxamount:' in i:
+            try:
+                st = i
+                ata = st.split('mount:')[1]
+                rez_data['Annual Tax Amount'] = ata
+            except:
+                pass
 
     try:
-        fb = rez_data[3].split(':')[1]
-        rez_data['Full bathrooms'] = fb.split('b')[0]
+        fb = ret_data[3].split(':')[1]
+        rez_data['Full bathrooms'] = fb[0]
     except:
         rez_data['Full bathrooms'] = None
 
@@ -147,6 +144,7 @@ def get_dict_from_data(ret_data, url, price, bd_ba_sq, adr_city_zip, overview):
     rez_data.pop('Otherfinancialinformation')
     rez_data.pop('Materialinformation')
     rez_data.pop('Utility')
+    rez_data.pop('Condition')
     return(rez_data)
 
 

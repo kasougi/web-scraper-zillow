@@ -15,6 +15,15 @@ def start():
     args = {'state(short)' : 'st',
             'price min': 'price',
             'price max': 'price',
+            'house_type' : {
+                    'house' : None,
+                    'condo' : None,
+                    'multifamily' : None,
+                    'mobile' : None,
+                    'townhouse' : None,
+                    'apartment' : None,
+                    'land' : None,
+                },
            'beds min': 'beds',
            'beds max': 'beds',
            'baths min': 'baths',
@@ -28,6 +37,15 @@ def start():
             }
     full_args = {
         'state(short)': None,
+        'type' : {
+            'house' : None,
+            'condo' : None,
+            'multifamily' : None,
+            'mobile' : None,
+            'townhouse' : None,
+            'apartment' : None,
+            'land' : None,
+        },
         'ah': {'value': True},
      'apa': {'value': False},
      'apco': {'value': False},
@@ -45,10 +63,18 @@ def start():
      'sqft': {'max': None, 'min': None},
      'tow': {'value': False}}
 
+    def house_type():
+        for h_arg, h_val in args['house_type'].items():
+            val = input(f"\rPlease enter something if want housetype: {h_arg}:\n")
+            if val:
+                full_args['type'][h_arg] = True
 
     for arg, arg_web in args.items():
-
+        if arg == 'house_type':
+            house_type()
+            continue
         val = input(f"\rPlease enter {arg}:\n")
+
         if arg_web == 'st':
             full_args[arg] = val
             try:
@@ -78,15 +104,23 @@ def start():
     check(full_args)
 
     args = delete_arggs(full_args)
-    url = 'https://www.zillow.com'
+    url = 'https://www.zillow.com/'
     for key, val in args.items():
+        if key == "type":
+            sch = 0
+            for k,a in args['type'].items():
+                if args['type'][k]:
+                    url += f'{k},'
+                    sch = 1
+            if sch:
+                url = url[:len(url)-1]+f'_type/'
+            continue
         if key == "state(short)":
-            url += f'/{val}'
+            url += f'{val}/'
             continue
         min = '' if not(val.get('min')) else val.get('min')
         max = '' if not(val.get('max')) else val.get('max')
-        url += f'/{min}-{max}_{key}'
-    url += '/'
+        url += f'{min}-{max}_{key}/'
     return url
 
 def check(full_args):
@@ -103,7 +137,7 @@ def check(full_args):
 def delete_arggs(full_args):
     del_item = []
     for key, val in full_args.items():
-        if key == "state(short)":
+        if key == "state(short)" or key == 'type':
             continue
         if len(val) > 1:
             if not(val['min'] and val['max']):
@@ -130,7 +164,6 @@ def main():
         start_arggs = start()
         if start_arggs != 0:
             x = False
-
     return start_arggs
 
 if __name__ == '__main__':

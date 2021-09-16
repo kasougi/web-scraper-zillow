@@ -9,7 +9,7 @@ import random
 import os
 from multiprocessing import Pool
 import start
-
+import pprint
 
 def check_capch(dr):
     try:
@@ -64,54 +64,41 @@ def srap_home(url_data):
     dr.get_from_url(url)
     time.sleep(5)
     check_capch(dr)
-    print('\r', f'Scrap url: {url}', end='')
+    print(f'\nScrap url: {url}')
+    dr.driver.execute_script("window.scrollTo(0, 150);")
+    time.sleep(5)
     try:
         # Facts and Figures
-        facts_and_figures = dr.driver.find_element_by_xpath('//*[@id="ds-container"]/div[4]/div[5]/div/nav/ul/li[2]/a')
+        facts_and_figures = dr.driver.find_element_by_xpath('//*[@id="ds-data-view"]/div[2]/div/nav/ul/li[2]')
         facts_and_figures.click()
         time.sleep(3)
         # See more facts and features
         see_more_facts = dr.driver.find_element_by_xpath('//*[@id="ds-data-view"]/ul/li[5]/div/div/div[3]/button/span')
         see_more_facts.click()
         time.sleep(3)
-    except:
+    except Exception as ex:
+        print(ex)
         dr.close()
         time.sleep(random.randint(1, 5))
         srap_home(url_data)
         return 1
-
     soup = BeautifulSoup(dr.driver.page_source, 'lxml')
-
-    try:
-        price = soup.find('div', {'class': 'ds-summary-row-container'}).findChild().findChild().findChild().text
-        bd_ba_sqft = soup.find('div', {
-            'class': 'ds-summary-row-container'}).findChild().findChild().findChild().next_sibling.text
-        bd_ba_sqft = ''.join(i for i in bd_ba_sqft if i.isdigit() or i == ' ').split()
-        adr = str(soup.find('h1', {'id': 'ds-chip-property-address'}).text).replace('\xa0', ' ')
-        adr_city_zip = adr.split(', ')
-    except:
-        price = soup.find('div', {'class': 'Flex-c11n-8-48-0__sc-n94bjd-0 bqUhuP'}).findChild().text
-        bd = soup.find('div', {'class': 'Flex-c11n-8-48-0__sc-n94bjd-0 bqUhuP'}).findChild().next_sibling.text
-        ba = soup.find('div', {'class': 'Flex-c11n-8-48-0__sc-n94bjd-0 bqUhuP'}).findChild().next_sibling.next_sibling. \
-            next_sibling.text
-        sqft = soup.find('div',
-                         {'class': 'Flex-c11n-8-48-0__sc-n94bjd-0 bqUhuP'}).findChild().next_sibling.next_sibling. \
-            next_sibling.next_sibling.next_sibling.text
-        bd_ba_sqft = [ba.split()[0], bd.split()[0], sqft.split()[0]]
-        adr = str(soup.find('h1', {'class': 'qcc861-0 bUbZRQ sc-15x24q3-1 kySjPc'}).text).replace('\xa0', ' ')
-        adr_city_zip = adr.split(', ')
-        # print(adr_city_zip)
+    price = soup.find('div', {"id" : "ds-data-view"}).findChild().findChild().findChild().findChild().text
+    bd = soup.find('div', {"id" : "ds-data-view"}).findChild().findChild().findChild().findChild().next_sibling.text
+    ba = soup.find('div', {"id" : "ds-data-view"}).findChild().findChild().findChild().findChild().next_sibling.next_sibling.next_sibling.text
+    sqft = soup.find('div',{"id" : "ds-data-view"}).findChild().findChild().findChild().findChild().next_sibling.next_sibling.next_sibling.next_sibling.next_sibling.text
+    bd_ba_sqft = [ba.split()[0], bd.split()[0], sqft.split()[0]+sqft.split()[1]]
+    adr = soup.find('div', {'id':'ds-data-view'}).findChild().find('h1').text.replace('\xa0', ' ')
+    adr_city_zip = adr.split(', ')
     overview = soup.find('div', {'class': "ds-overview-section"}).text.split('Read more')[0]
     overview = overview.replace('w/', '')
-    dev = soup.find_all('div', {'class': 'sc-pjumZ gUhPC'})
-    res = []
-    for i in dev:
-        res += i.text.split()
-    str_j = ''.join(res)
-    res_str = re.findall(r"[A-Z]?[^A-Z]*", str_j)
-    dr.close()
-
+    dev = soup.find('div',{"id" : "ds-data-view"}).findChild().next_sibling.next_sibling.findChild().next_sibling.next_sibling.next_sibling.next_sibling.findChild().next_sibling.findChild()
+    dev = dev.text.split('Interior details')[1]
+    dev = ''.join(dev.split())
+    res_str = re.findall(r"[A-Z]?[^A-Z]*", dev)
     dict_for_save = get_dict_from_data(res_str, url, price, bd_ba_sqft, adr_city_zip, overview)
+    pprint.pprint(dict_for_save)
+    dr.close()
     save(dict_for_save, data_name)
 
 
@@ -119,7 +106,7 @@ def main(start_url):
     urls = set()
     for i in range(20):
         url = start_url + f'{i}_p'
-        dr = ChromeDriverWithOptions(size=1)
+        dr = ChromeDriverWithOptions()
         dr.get_from_url(url)
         time.sleep(5)
         ir = 0
@@ -148,10 +135,9 @@ if __name__ == '__main__':
     urls = list(main(url))
     if not urls:
         print('\r', "Nothing was found", end='')
-
     urls_new = []
     for u in urls:
         urls_new.append(u + '*:*' + url)
-
-    p = Pool(processes=1)
+    # srap_home()
+    p = Pool(processes=3)
     p.map(srap_home, urls_new)

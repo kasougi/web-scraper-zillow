@@ -4,7 +4,7 @@ from fake_useragent import UserAgent
 
 class ChromeDriverWithOptions(object):
 
-    def __init__(self, size=False):
+    def __init__(self):
         try:
             self.useragent = UserAgent()
             self.options = webdriver.ChromeOptions()
@@ -17,8 +17,7 @@ class ChromeDriverWithOptions(object):
             self.driver = webdriver.Chrome(
                 executable_path="/Users/nikitaisutov/PycharmProjects/parsers/Scrap_upwork/driver/chromedriver",
                 options=self.options)
-            if size:
-                self.driver.set_window_size(480, 1080)
+            self.driver.set_window_size(480, 1080)
         except Exception as ex:
             print(ex)
 
