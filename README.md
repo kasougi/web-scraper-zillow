@@ -8,9 +8,10 @@ pyhton3 main.py
 
 # Required packages
 ```python
-pip install fake_useragent
-pip install bs4 
-pip install selenium
+pip3 install fake_useragent
+pip3 install bs4 
+pip3 install selenium
+pip3 install lxml
 ```
 
 
