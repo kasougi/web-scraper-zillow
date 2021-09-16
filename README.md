@@ -21,40 +21,39 @@ These parameters are used to search
 # Output
 
 The output data is a csv file
-The file contains 34 fields, such as:
+The file contains 30 fields, such as:
 
-*url
-*price
-*overview
-*Bedrooms
-*Bathrooms
-*square footage
-*address
-*city
-*zip
-*Full bathrooms
-*Basement
-*Flooring
-*Hometype
-*Heating
-*Cooling
-*Appliances
-*Interior
-*Parking
-*Totalspaces
-*Architecturalstyle
-*Parkingfeatures
-*Lot
-*Otherpropertyinformation
-*Typeandstyle
-*Construction materials
-*Foundation
-*Roof
-*Utility
-*New construction
-*tpe
-*Condition
-*Annual Tax Amoun
+* url
+* price
+* overview
+* Bedrooms
+* Bathrooms
+* square footage
+* address
+* city
+* zip
+* Full bathrooms
+* Basement
+* Flooring
+* Hometype
+* Heating
+* Cooling
+* Appliances
+* Interior
+* Parking
+* Totalspaces
+* Architecturalstyle
+* Parkingfeatures
+* Lot
+* Otherpropertyinformation
+* Typeandstyle
+* Construction materials
+* Foundation
+* Roof
+* Utility
+* New construction
+* Condition
+* Annual Tax Amoun
 
 
 # Required packages
