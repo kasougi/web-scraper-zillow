@@ -1,5 +1,6 @@
-# web-scraper-zillow
-web scraper for zillow with configurable parameters
+# Zillow Web Scraper
+
+A powerful and convenient tool for scraping data from a website www.zollow.com.
 
 # Getting start
 ```python
