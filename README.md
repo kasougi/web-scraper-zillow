@@ -8,6 +8,7 @@ pyhton3 main.py
 
 # Required packages
 ```python
+pip install fake_useragent
 pip install bs4 
 pip install selenium
 ```
