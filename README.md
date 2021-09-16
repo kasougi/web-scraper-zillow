@@ -20,7 +20,7 @@ These parameters are used to search
 
 # Output
 
-The output data is a csv file
+The output data is a `.csv` file
 The file contains 30 fields, such as:
 
 * url
