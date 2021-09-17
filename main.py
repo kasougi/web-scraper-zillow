@@ -1,15 +1,15 @@
+import json
+
 from bs4 import BeautifulSoup
 import time
 from Driverconnect import ChromeDriverWithOptions
 from data_refactor import get_dict_from_data
-import re
 import csv
 from selenium.webdriver import ActionChains
 import random
 import os
 from multiprocessing import Pool
 import start
-import pprint
 
 
 def check_capch(dr):
@@ -60,52 +60,33 @@ def save(dict, name):
 
 def srap_home(url_data):
     url = url_data.split('*:*')[0]
+    zpid = url.split('/')[-2].replace('_zpid', '')
     data_name = url_data.split('*:*')[1]
     dr = ChromeDriverWithOptions()
     dr.get_from_url(url)
     time.sleep(5)
     check_capch(dr)
     print(f'\nScrap url: {url}')
-    time.sleep(5)
-    dr.driver.execute_script(f"window.scrollTo(100, 300);")
-    try:
-        # Facts and Figures
-        facts_and_figures = dr.driver.find_element_by_xpath('//*[@id="ds-data-view"]/div[2]/div/nav/ul/li[2]/a')
-        facts_and_figures.click()
-        time.sleep(5)
-        # See more facts and features
-        see_more_facts = dr.driver.find_element_by_xpath('//*[@id="ds-data-view"]/ul/li[5]/div/div/div[3]/button/span')
-        see_more_facts.click()
-        time.sleep(5)
-    except Exception as ex:
-        print(ex)
-        dr.close()
-        time.sleep(random.randint(1, 5))
-        srap_home(url_data)
-        return 1
+    time.sleep(3)
     soup = BeautifulSoup(dr.driver.page_source, 'lxml')
+    json_from_html = soup.find('script', {'id': 'hdpApolloPreloadedData'})
     dr.close()
-    price = soup.find('div', {"id": "ds-data-view"}).findChild().findChild().findChild().findChild().text
-    bd = soup.find('div', {"id": "ds-data-view"}).findChild().findChild().findChild().findChild().next_sibling.text
-    ba = soup.find('div', {"id": "ds-data-view"}).findChild().findChild().findChild().findChild().next_sibling.next_sibling.next_sibling.text
-    sqft = soup.find('div', {"id": "ds-data-view"}).findChild().findChild().findChild().findChild().next_sibling.next_sibling.next_sibling.next_sibling.next_sibling.text
-    bd_ba_sqft = [ba.split()[0], bd.split()[0], sqft.split()[0] + sqft.split()[1]]
-    adr = soup.find('div', {'id': 'ds-data-view'}).findChild().find('h1').text.replace('\xa0', ' ')
-    adr_city_zip = adr.split(', ')
-    overview = soup.find('div', {'class': "ds-overview-section"}).text.split('Read more')[0]
-    overview = overview.replace('w/', '')
-    dev = soup.find('div', {"id": "ds-data-view"}).findChild().next_sibling.next_sibling.findChild().next_sibling.next_sibling.next_sibling.next_sibling.findChild().next_sibling.findChild()
-    dev = dev.text.split('Interior details')[1]
-    dev = ''.join(dev.split())
-    res_str = re.findall(r"[A-Z]?[^A-Z]*", dev)
-    dict_for_save = get_dict_from_data(res_str, url, price, bd_ba_sqft, adr_city_zip, overview)
-    pprint.pprint(dict_for_save)
+    txt = list(json_from_html.text)
+    for i in range(len(txt)):
+        if txt[i] == "\\":
+            if txt[i + 1] != "\\":
+                pass
+            elif txt[i + 1] == "\\" and txt[i + 2] == "\\":
+                txt[i + 3] = "'"
+    len_for_json = len(zpid) + 10
+    dfj = json.loads(''.join(txt).replace('\\', '')[13:-len_for_json])
+    dict_for_save = get_dict_from_data(dfj, zpid)
     save(dict_for_save, data_name)
 
 
 def get_links(start_url):
     urls = set()
-    for i in range(1):
+    for i in range(20):
         url = start_url + f'{i}_p'
         dr = ChromeDriverWithOptions()
         dr.get_from_url(url)
@@ -140,10 +121,12 @@ def main():
     urls_new = []
     for u in urls:
         urls_new.append(u + '*:*' + url)
-    # srap_home()
+    # for i in urls_new:
+    #     srap_home(i)
     p = Pool(processes=8)
     p.map(srap_home, urls_new)
 
 
 if __name__ == '__main__':
     main()
+    # srap_home()
