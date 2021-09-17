@@ -6,6 +6,16 @@ A powerful and convenient tool for scraping data from a website www.zollow.com.
 ```python
 pyhton3 main.py
 ```
+# For test
+in main.py on 89 line:
+```python
+    for i in range(20):
+```
+
+Change to:
+```python
+    for i in range(1):
+```
 # Features
 The scraper can accept parameters for data collection
 
