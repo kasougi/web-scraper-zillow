@@ -100,7 +100,7 @@ def get_dict_from_data(ret_data, url, price, bd_ba_sq, adr_city_zip, overview):
             i = rez_data['Materialinformation'].split(':')[1].find('Foundation')
             if i == -1:
                 i = rez_data['Materialinformation'].split(':')[1].find('Roof')
-            rez_data['Constructionmaterials'] = rez_data['Materialinformation'].split(':')[1][0:i]
+            rez_data['Construction materials'] = rez_data['Materialinformation'].split(':')[1][0:i]
 
             if 'Foundation' in rez_data['Materialinformation']:
                 ii = rez_data['Materialinformation'].split(':')[2].find('Roof')
@@ -122,6 +122,21 @@ def get_dict_from_data(ret_data, url, price, bd_ba_sq, adr_city_zip, overview):
         elif 'Roof:' in rez_data['Materialinformation']:
             rez_data['Roof'] = rez_data['Materialinformation'].split('Roof:')[1]
 
+    if rez_data.get('Lot'):
+        if 'Lotsize:' in rez_data["Lot"]:
+            lot = rez_data['Lot'].split('size:')[1]
+            rez_data['Lot'] = lot
+
+    if rez_data.get('Otherinteriorfeatures'):
+        if 'Totalinteriorlivablearea' in rez_data['Otherinteriorfeatures']:
+            totalinteriorlivablearea = rez_data['Otherinteriorfeatures'].split(':')[1]
+            totalinteriorlivablearea = totalinteriorlivablearea.split('sqft')[0]
+            rez_data['Total interior livable area'] = totalinteriorlivablearea
+        if 'Fireplace:' in rez_data['Otherinteriorfeatures']:
+            fireplace = rez_data['Otherinteriorfeatures'].split('Fireplace:')[1]
+            fireplace = fireplace.replace('Propertydetails', '')
+            rez_data['Fireplace'] = fireplace
+
     for i in ret_data:
         if 'Annualtaxamount:' in i:
             try:
@@ -137,14 +152,15 @@ def get_dict_from_data(ret_data, url, price, bd_ba_sq, adr_city_zip, overview):
     except:
         rez_data['Full bathrooms'] = None
 
-    rez_data.pop('Parking')
-    rez_data.pop('type')
-    rez_data.pop('Typeandstyle')
-    rez_data.pop('Location')
-    rez_data.pop('Otherfinancialinformation')
-    rez_data.pop('Materialinformation')
-    rez_data.pop('Utility')
-    rez_data.pop('Condition')
+    rez_data.pop('Parking', None)
+    rez_data.pop('type', None)
+    rez_data.pop('Typeandstyle', None)
+    rez_data.pop('Location', None)
+    rez_data.pop('Otherfinancialinformation', None)
+    rez_data.pop('Otherinteriorfeatures', None)
+    rez_data.pop('Materialinformation', None)
+    rez_data.pop('Utility', None)
+    rez_data.pop('Condition', None)
     return(rez_data)
 
 

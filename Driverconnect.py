@@ -12,8 +12,8 @@ class ChromeDriverWithOptions(object):
             self.options.add_argument(f"user-agent={self.useragent.chrome}")
             # Убираем WebDriver
             self.options.add_argument("--disable-blink-features=AutomationControlled")
-            # # Оставляем браузер в фоновом режиме
-            # self.options.headless = True
+            # Оставляем браузер в фоновом режиме
+            self.options.headless = True
             self.driver = webdriver.Chrome(
                 executable_path="/Users/nikitaisutov/PycharmProjects/parsers/Scrap_upwork/driver/chromedriver",
                 options=self.options)
