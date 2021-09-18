@@ -96,7 +96,6 @@ def get_links(start_url):
             ]
     need_sort = 1
     for srt in sort:
-        print(srt)
         if need_sort:
             for i in range(21):
                 url = start_url + f'{srt}/{i}_p/'
@@ -122,16 +121,14 @@ def get_links(start_url):
                 soup = BeautifulSoup(dr.driver.page_source, 'lxml')
                 try:
                     total_count = int(soup.find('div', {'class': 'total-text'}).text.replace(',', ''))
-                    print(total_count)
                     if total_count <= 500 and i == 0:
                         need_sort = 0
-                except Exception as ex:
+                except:
                     pass
                 cards = soup.find_all('a', {'class': 'list-card-link'})
                 urls.update(set(i['href'] for i in cards))
                 time.sleep(1)
                 dr.close()
-                print(len(urls))
     else:
         return urls
 
