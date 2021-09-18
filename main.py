@@ -1,5 +1,4 @@
 import json
-
 from bs4 import BeautifulSoup
 import time
 from Driverconnect import ChromeDriverWithOptions
@@ -86,28 +85,53 @@ def srap_home(url_data):
 
 def get_links(start_url):
     urls = set()
-    for i in range(20):
-        url = start_url + f'{i}_p'
-        dr = ChromeDriverWithOptions()
-        dr.get_from_url(url)
-        time.sleep(5)
-        ir = 0
-        check_capch(dr)
-        while ir + 200 <= 1080 * 14:
-            krtk = '/' if random.randint(1, 2) % 2 else '\\'
-            print('\r', f'{krtk} We get links: page {i}', end='')
-            # Scroll down to bottom
-            dr.driver.execute_script(f"window.scrollTo({ir}, {ir + 200});")
-            ir += 200
-            # Wait to load page
-            time.sleep(0.18)
-        time.sleep(3)
-        # Получаем ссылку
-        soup = BeautifulSoup(dr.driver.page_source, 'lxml')
-        cards = soup.find_all('a', {'class': 'list-card-link'})
-        urls.update(set(i['href'] for i in cards))
-        time.sleep(1)
-        dr.close()
+    sort = ["globalrelevanceex_sort",
+            "priced_sort",
+            "pricea_sort",
+            "days_sort",
+            "beds_sort",
+            "baths_sort",
+            "size_sort",
+            "lot_sort",
+            ]
+    need_sort = 1
+    for srt in sort:
+        print(srt)
+        if need_sort:
+            for i in range(21):
+                url = start_url + f'{srt}/{i}_p/'
+                dr = ChromeDriverWithOptions()
+                try:
+                    dr.get_from_url(url)
+                except:
+                    dr.close()
+                    return urls
+                time.sleep(5)
+                ir = 0
+                check_capch(dr)
+                while ir + 200 <= 1080 * 14:
+                    krtk = '/' if random.randint(1, 2) % 2 else '\\'
+                    print('\r', f'{krtk} We get links: page {i}', end='')
+                    # Scroll down to bottom
+                    dr.driver.execute_script(f"window.scrollTo({ir}, {ir + 200});")
+                    ir += 200
+                    # Wait to load page
+                    time.sleep(0.18)
+                time.sleep(3)
+                # Получаем ссылку
+                soup = BeautifulSoup(dr.driver.page_source, 'lxml')
+                try:
+                    total_count = int(soup.find('div', {'class': 'total-text'}).text.replace(',', ''))
+                    print(total_count)
+                    if total_count <= 500 and i == 0:
+                        need_sort = 0
+                except Exception as ex:
+                    pass
+                cards = soup.find_all('a', {'class': 'list-card-link'})
+                urls.update(set(i['href'] for i in cards))
+                time.sleep(1)
+                dr.close()
+                print(len(urls))
     else:
         return urls
 
@@ -121,12 +145,9 @@ def main():
     urls_new = []
     for u in urls:
         urls_new.append(u + '*:*' + url)
-    # for i in urls_new:
-    #     srap_home(i)
     p = Pool(processes=8)
     p.map(srap_home, urls_new)
 
 
 if __name__ == '__main__':
     main()
-    # srap_home()

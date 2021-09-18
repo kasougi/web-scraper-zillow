@@ -101,7 +101,9 @@ def start():
                     full_args[arg.split()[0]][arg.split()[1]] = None
                 else:
                     full_args[arg][''] = None
-    check(full_args)
+
+    if not(check(full_args)):
+        return 0
 
     args = delete_arggs(full_args)
     url = 'https://www.zillow.com/'
@@ -129,10 +131,14 @@ def check(full_args):
         print(f"{key}: {val}")
     print("You shoud? (y/n)")
     val = input()
-    if not(val == 'y' or val == 'yes'):
+    if val == 'y' or val == 'yes':
+        return 1
+    elif val == 'n' or val == 'no':
+        return 0
+    if not(val == 'y' or val == 'yes' or val == 'n' or val == 'no'):
         print('Invalid value, please try again')
-        check(full_args)
-    return 1
+        return check(full_args)
+
 
 def delete_arggs(full_args):
     del_item = []
