@@ -1,5 +1,3 @@
-import pprint
-
 def start():
     states = {'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas', 'CA': 'California', 'CO': 'Colorado',
               'CT': 'Connecticut', 'DE': 'Delaware', 'FL': 'Florida', 'GA': 'Georgia', 'HI': 'Hawaii', 'ID': 'Idaho',
@@ -13,8 +11,8 @@ def start():
 
 
     args = {'state(short)' : 'st',
-            'price min': 'price',
-            'price max': 'price',
+            'price_min': 'price',
+            'price_max': 'price',
             'house_type' : {
                     'house' : None,
                     'condo' : None,
@@ -24,16 +22,16 @@ def start():
                     'apartment' : None,
                     'land' : None,
                 },
-           'beds min': 'beds',
-           'beds max': 'beds',
-           'baths min': 'baths',
-           'baths max': 'baths',
-            'parks min': 'parks',
-            'sqft max': 'sqft',
-            'sqft min': 'sqft',
-            'built min': 'built',
-            'built max': 'built',
-            'hoa max': 'hoa'
+           'beds_min': 'beds',
+           'beds_max': 'beds',
+           'baths_min': 'baths',
+           'baths_max': 'baths',
+            'parks_min': 'parks',
+            'sqft_max': 'sqft',
+            'sqft_min': 'sqft',
+            'built_min': 'built',
+            'built_max': 'built',
+            'hoa_max': 'hoa'
             }
     full_args = {
         'state(short)': None,
@@ -92,15 +90,15 @@ def start():
             except:
                 pass
             if val != '-':
-                if len(arg.split()) > 1:
-                    full_args[arg.split()[0]][arg.split()[1]] = val
+                if len(arg.split('_')) > 1:
+                    full_args[arg.split('_')[0]][arg.split('_')[1]] = val
                 else:
-                    full_args[arg][''] = val
+                    full_args[arg]['value'] = val
             else:
-                if len(arg.split()) > 1:
-                    full_args[arg.split()[0]][arg.split()[1]] = None
+                if len(arg.split('_')) > 1:
+                    full_args[arg.split('_')[0]][arg.split('_')[1]] = None
                 else:
-                    full_args[arg][''] = None
+                    full_args[arg]['value'] = None
 
     if not(check(full_args)):
         return 0
@@ -173,6 +171,7 @@ def main():
     return start_arggs
 
 if __name__ == '__main__':
-    main()
+    print(main())
+
 
 

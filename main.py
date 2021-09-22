@@ -8,7 +8,7 @@ from selenium.webdriver import ActionChains
 import random
 import os
 from multiprocessing import Pool
-import start
+from start_url import add_to_url
 
 
 def check_capch(dr):
@@ -134,7 +134,8 @@ def get_links(start_url):
 
 
 def main():
-    url = start.main()
+    url = add_to_url()
+    print(url)
     urls = list(get_links(url))
     if not urls:
         print('\r', "Nothing was found", end='')
