@@ -1,7 +1,11 @@
 def get_dict_from_data(dfj, zpid):
 
-    arg = "ForSaleDoubleScrollFullRenderQuery{'zpid':" + str(zpid) + ",'contactFormRenderParameter':{'zpid':" + str(zpid) + ",'platform':'desktop','isDoubleScroll':true}}"
-    dfj = dfj[arg]['property']
+    try:
+        arg = "ForSaleDoubleScrollFullRenderQuery{'zpid':" + str(zpid) + ",'contactFormRenderParameter':{'zpid':" + str(zpid) + ",'platform':'desktop','isDoubleScroll':true}}"
+        dfj = dfj[arg]['property']
+    except:
+        arg = "ForSaleDoubleScrollFullRenderQuery{'zpid':" + str(zpid) + ",'contactFormRenderParameter':{'zpid':" + str(zpid) + ",'platform':'desktop','isDoubleScroll':true}}"
+        dfj = dfj[arg]['property']
 
     data_for_save = dict()
 
