@@ -37,10 +37,13 @@ def get_dict_from_data(dfj, zpid):
     }
 
     for name_in_csv, name_in_json in arg_dict.items():
-        if dfj.get(name_in_json):
-            data_for_save[name_in_csv] = dfj[name_in_json]
-        else:
-            data_for_save[name_in_csv] = None
+        try:
+            if dfj.get(name_in_json):
+                data_for_save[name_in_csv] = dfj[name_in_json]
+            else:
+                data_for_save[name_in_csv] = None
+        except:
+            pass
 
     dfj = dfj['resoFacts']
 
@@ -60,10 +63,13 @@ def get_dict_from_data(dfj, zpid):
     }
 
     for name_in_csv, name_in_json in arg_dict.items():
-        if dfj.get(name_in_json):
-            data_for_save[name_in_csv] = dfj[name_in_json]
-        else:
-            data_for_save[name_in_csv] = None
+        try:
+            if dfj.get(name_in_json):
+                data_for_save[name_in_csv] = dfj[name_in_json]
+            else:
+                data_for_save[name_in_csv] = None
+        except:
+            pass
 
     arg_of_list_in_dict = {
         "Heating": "heating",
@@ -74,12 +80,16 @@ def get_dict_from_data(dfj, zpid):
     }
 
     for name_in_csv, list_name_in_json in arg_of_list_in_dict.items():
-        if dfj.get(list_name_in_json):
-            data_for_save[name_in_csv] = ''
-            for i in dfj[list_name_in_json]:
-                data_for_save[name_in_csv] += i + ", "
+        try:
+            if dfj.get(list_name_in_json):
+                data_for_save[name_in_csv] = ''
+                for i in dfj[list_name_in_json]:
+                    data_for_save[name_in_csv] += i + ", "
+                else:
+                    data_for_save[name_in_csv] = data_for_save[name_in_csv][:len(data_for_save[name_in_csv]) - 2]
             else:
-                data_for_save[name_in_csv] = data_for_save[name_in_csv][:len(data_for_save[name_in_csv]) - 2]
-        else:
-            data_for_save[name_in_csv] = None
+                data_for_save[name_in_csv] = None
+        except:
+            pass
+
     return (data_for_save)
